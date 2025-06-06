@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -252,8 +252,8 @@
 
     <div class="chat-container" id="chatContainer">
         <div class="welcome-message">
-            <h2>Welcome to EduGPT!</h2>
-            <p>Your personal educational assistant. Ask me about any topic and I'll help you find the best learning resources.</p>
+            <h2>¡Welcome to EduGPT!</h2>
+            <p>Your personal educational assistant. Ask me about any topic and I will help you find the best learning resources.</p>
         </div>
     </div>
 
@@ -265,7 +265,7 @@
         <div class="input-wrapper">
             <textarea 
                 id="userInput" 
-                placeholder="Type your question here..."
+                placeholder="Write your question here..."
                 onkeydown="handleKeyPress(event)"
             ></textarea>
             <button class="send-button" onclick="sendMessage()">
@@ -277,19 +277,19 @@
     </div>
 
     <script>
-        // API Configuration
+        // Configuración de la API
         const API_CONFIG = {
             baseUrl: 'https://openrouter.ai/api/v1/chat/completions',
             model: 'deepseek/deepseek-r1-0528-qwen3-8b:free',
             apiKey: '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'
         };
 
-        // DOM Elements
+        // Elementos del DOM
         const chatContainer = document.getElementById('chatContainer');
         const userInput = document.getElementById('userInput');
         const loadingIndicator = document.getElementById('loadingIndicator');
 
-        // Key handler
+        // Manejador de teclas
         function handleKeyPress(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
@@ -297,7 +297,7 @@
             }
         }
 
-        // Add message to chat
+        // Añadir mensaje al chat
         function addMessage(content, isUser = false) {
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
@@ -316,12 +316,12 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        // Main function to send message
+        // Función principal para enviar mensaje
         async function sendMessage() {
             const message = userInput.value.trim();
             if (!message) return;
 
-            // Clear input and show user message
+            // Limpiar input y mostrar mensaje del usuario
             userInput.value = '';
             addMessage(message, true);
             loadingIndicator.style.display = 'block';
@@ -341,11 +341,11 @@
                         messages: [
                             {
                                 role: 'system',
-                                content: 'You are an educational assistant that searches for and provides learning resources, exercises, and educational activities.'
+                                content: 'Eres un asistente educativo que busca y proporciona recursos de aprendizaje, ejercicios y actividades educativas. y siempre hablas en ingles'
                             },
                             {
                                 role: 'user',
-                                content: `Search for educational resources, exercises, and activities related to: ${message}`
+                                content: `Busca recursos educativos, ejercicios y actividades relacionadas con: ${message}`
                             }
                         ],
                         temperature: 0.7,
@@ -353,27 +353,27 @@
                     })
                 });
 
-                // HTTP error handling
+                // Manejo de errores HTTP
                 if (!response.ok) {
                     const errorData = await response.json().catch(() => null);
-                    throw new Error(errorData?.error?.message || `HTTP Error: ${response.status}`);
+                    throw new Error(errorData?.error?.message || `Error HTTP: ${response.status}`);
                 }
 
                 const data = await response.json();
 
-                // Response validation
+                // Validación de la respuesta
                 if (!data.choices?.[0]?.message?.content) {
                     throw new Error('Invalid response format');
                 }
 
                 const aiResponse = data.choices[0].message.content;
 
-                // Empty response validation
+                // Validación de respuesta vacía
                 if (!aiResponse.trim()) {
-                    throw new Error('Empty response');
+                    throw new Error('The answer is empty');
                 }
 
-                // Format response
+                // Formateo de la respuesta
                 const formattedResponse = formatResponse(aiResponse);
                 addMessage(formattedResponse);
 
@@ -385,7 +385,7 @@
             }
         }
 
-        // Function to format response
+        // Función para formatear la respuesta
         function formatResponse(response) {
             const cleanResponse = response
                 .replace(/[^\w\s.,:;!?()\-/]/g, '')
@@ -406,16 +406,16 @@
                 .join('');
         }
 
-        // Function to handle errors
+        // Función para manejar errores
         function handleError(error) {
-            let errorMessage = 'Sorry, an error occurred while processing your request.';
+            let errorMessage = 'Lo siento, ha ocurrido un error al procesar tu solicitud.';
             
             if (error.message.includes('API key')) {
-                errorMessage = 'Authentication error. Please verify your API key.';
+                errorMessage = 'Error de autenticación. Por favor, verifica la API key.';
             } else if (error.message.includes('HTTP')) {
-                errorMessage = 'Connection error. Please try again later.';
-            } else if (error.message.includes('Empty')) {
-                errorMessage = 'No resources found for your search. Try rephrasing your question.';
+                errorMessage = 'Error de conexión. Por favor, intenta de nuevo más tarde.';
+            } else if (error.message.includes('vacía')) {
+                errorMessage = 'No se encontraron recursos para tu búsqueda. Intenta reformular tu pregunta.';
             }
             
             addMessage(`<div class="error-message">${errorMessage}</div>`);
